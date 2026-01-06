@@ -47,7 +47,7 @@ module.exports = {
     })
    
   },
-  GetEquities: function (day, callback) {
+  GetEquities_Depercated_callbackHell: function (day, callback) {
     var query2 = new azure.TableQuery()
     var query = new azure.TableQuery().where("PartitionKey eq ?", day);
     AzureStorage.GetDaily("PolygonCompany", tableService, query2, function (polygonCompany) {
@@ -208,6 +208,219 @@ module.exports = {
     });
 
   },
+
+GetEquities: function (day, callback) {
+  const queryAll = new azure.TableQuery(); // PolygonCompany uses this in your code
+  const queryDay = new azure.TableQuery().where("PartitionKey eq ?", day);
+
+  // If you can change the API, prefer returning a Promise and using async/await instead.
+  Promise.all([
+    getDailyAsync("PolygonCompany", tableService, queryAll),
+    getDailyAsync("PickList5000", tableService, queryDay),
+    getDailyAsync("WsjTarget", tableService, queryDay),
+    getDailyAsync("Zacks", tableService, queryDay),
+    getDailyAsync("SMA20Day", tableService, queryDay),
+    getDailyAsync("StocksMonthlyGrowth", tableService, queryDay),
+    getDailyAsync("SMA50Day", tableService, queryDay),
+    getDailyAsync("CCI20Day", tableService, queryDay),
+    getDailyAsync("Barcharts", tableService, queryDay),
+    getDailyAsync("AdDaily", tableService, queryDay),
+    getDailyAsync("ShortVolume", tableService, queryDay),
+    getDailyAsync("IEX", tableService, queryDay),
+  ])
+    .then(
+      ([
+        polygonCompany,
+        fundamentals,
+        wjs,
+        zacks,
+        twentyDay,
+        stocksMonthlyGrowth,
+        fiftyDay,
+        cci,
+        barcharts,
+        ad,
+        shortVolume,
+        iex,
+      ]) => {
+        const symbolsUnique = [];
+        const array = [];
+
+        const polygonCompanyDict = {};
+        polygonCompany.forEach((company) => {
+          polygonCompanyDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const twentyDayDict = {};
+        twentyDay.forEach((company) => {
+          twentyDayDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const stocksMonthlyGrowthDict = {};
+        stocksMonthlyGrowth.forEach((company) => {
+          stocksMonthlyGrowthDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const fundamentalsDict = {};
+        const extras = {};
+        fundamentals.forEach((company) => {
+          const symbol = objectValues(company.RowKey);
+          symbolsUnique.push(symbol);
+
+          fundamentalsDict[symbol] = allProperties(company);
+
+          const scoreDict = {
+            beniesh: beniesh(company),
+            altmanScore: altmanScore(company),
+            piotroskiScore: piotroskiScore(company),
+          };
+
+          extras[symbol] = scoreDict;
+        });
+
+        const wjsDict = {};
+        wjs.forEach((company) => {
+          wjsDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const zacksDict = {};
+        zacks.forEach((company) => {
+          zacksDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const barchartsDict = {};
+        barcharts.forEach((company) => {
+          barchartsDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const cciDict = {};
+        cci.forEach((company) => {
+          cciDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const fiftyDayDict = {};
+        fiftyDay.forEach((company) => {
+          fiftyDayDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const adDict = {};
+        ad.forEach((company) => {
+          adDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const shortVolumeDict = {};
+        shortVolume.forEach((company) => {
+          shortVolumeDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        const iexDict = {};
+        iex.forEach((company) => {
+          iexDict[objectValues(company.RowKey)] = allProperties(company);
+        });
+
+        symbolsUnique.forEach((symbol) => {
+          const masterDict = {};
+
+          if (
+            fundamentalsDict[symbol] !== undefined &&
+            shortVolumeDict[symbol] !== undefined &&
+            adDict[symbol] !== undefined &&
+            fiftyDayDict[symbol] !== undefined &&
+            cciDict[symbol] !== undefined
+          ) {
+            // Polygon (industry/sector only)
+            const poly = polygonCompanyDict[symbol] || {};
+            for (const [key, value] of Object.entries(poly)) {
+              if (key === "industry" || key === "sector") masterDict[key] = value;
+            }
+
+            // Extra scores
+            const extra = extras[symbol] || {};
+            for (const [key, value] of Object.entries(extra)) masterDict[key] = value;
+
+            // Fundamentals (skip metadata)
+            const fund = fundamentalsDict[symbol] || {};
+            for (const [key, value] of Object.entries(fund)) {
+              if (key !== ".metadata" && key !== "Timestamp") masterDict[key] = value;
+            }
+
+            // Monthly growth numeric
+            const mg = stocksMonthlyGrowthDict[symbol] || {};
+            for (const [key, value] of Object.entries(mg)) {
+              if (!isNaN(value)) masterDict[key] = value;
+            }
+
+            // SMA20
+            const d20 = twentyDayDict[symbol] || {};
+            for (const [key, value] of Object.entries(d20)) {
+              if (key === "SMA" && !isNaN(value)) masterDict["Sma20"] = Number(value);
+            }
+
+            // IEX numeric
+            const iexRow = iexDict[symbol] || {};
+            for (const [key, value] of Object.entries(iexRow)) {
+              if (!isNaN(value)) masterDict[key] = Number(value);
+            }
+
+            // Short volume numeric
+            const sv = shortVolumeDict[symbol] || {};
+            for (const [key, value] of Object.entries(sv)) {
+              if (!isNaN(value)) masterDict[key] = Number(value);
+            }
+
+            // AD numeric
+            const adRow = adDict[symbol] || {};
+            for (const [key, value] of Object.entries(adRow)) {
+              if (!isNaN(value)) masterDict[key] = Number(value);
+            }
+
+            // SMA50
+            const d50 = fiftyDayDict[symbol] || {};
+            for (const [key, value] of Object.entries(d50)) {
+              if (key === "SMA" && !isNaN(value)) masterDict["Sma50"] = Number(value);
+            }
+
+            // CCI numeric
+            const cciRow = cciDict[symbol] || {};
+            for (const [key, value] of Object.entries(cciRow)) {
+              if (!isNaN(value)) masterDict[key] = Number(value);
+            }
+
+            // Barcharts numeric
+            const bc = barchartsDict[symbol] || {};
+            for (const [key, value] of Object.entries(bc)) {
+              if (!isNaN(value)) masterDict[key] = Number(value);
+            }
+
+            // Zacks numeric
+            const zk = zacksDict[symbol] || {};
+            for (const [key, value] of Object.entries(zk)) {
+              if (!isNaN(value)) masterDict[key] = Number(value);
+            }
+
+            // WSJ numeric
+            const wsjRow = wjsDict[symbol] || {};
+            for (const [key, value] of Object.entries(wsjRow)) {
+              if (!isNaN(value)) masterDict[key] = Number(value);
+            }
+
+            array.push(masterDict);
+          }
+        });
+
+        callback(array);
+      }
+    )
+    .catch((err) => {
+      // Preserve your callback API; decide how you want to surface errors.
+      // Option A: callback([]) (silent fail)
+      // Option B: callback(null, err) (requires changing callback signature)
+      // Option C: throw (will crash if not handled)
+      console.error("GetEquities failed:", err);
+      callback([]);
+    });
+},
+
   GetNullShort: function (day, callback) {
     var query = new azure.TableQuery().where("PartitionKey eq ?", day);
     AzureStorage.GetDaily("PickList5000", tableService, query, function (obj) {
@@ -432,6 +645,22 @@ function topDeltas(company) {
 
   return deltas;
 }
+// Promise wrapper around your callback-style AzureStorage.GetDaily
+function getDailyAsync(tableName, tableService, query) {
+  return new Promise((resolve, reject) => {
+    AzureStorage.GetDaily(tableName, tableService, query, (result) => {
+      // If your GetDaily has an error-first callback signature, change to (err, result)
+      // and reject(err) accordingly.
+      try {
+        resolve(result);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  });
+}
+
+
 function objectValues(metric) {
   var result =
     (Object.values(metric != undefined && metric != null ? metric : {})[0] ==
