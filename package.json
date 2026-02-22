@@ -1,0 +1,26 @@
+{
+  "name": "backtester",
+  "version": "1.0.0",
+  "description": "Algorithmic trading backtester and live trade executor",
+  "main": "process.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "coverage": "jest --coverage --coverageReporters=html && open coverage/index.html"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "Library/**/*.js",
+      "Core/**/*.js"
+    ],
+    "coverageReporters": ["html", "text-summary"]
+  },
+  "dependencies": {
+    "azure-storage": "^2.10.7",
+    "colors": "^1.4.0",
+    "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
