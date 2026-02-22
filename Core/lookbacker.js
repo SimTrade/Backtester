@@ -14,7 +14,6 @@ function lookbacker(day, callback) {
         day = d.toJSON().slice(0, 10);
         Order.GetCalendar(day, function (isTradingDay) {
           if (isTradingDay) {
-            //console.log(colors.italic("adjusted 1 dayback"));
             callback(day)
 
           } else {
@@ -23,7 +22,6 @@ function lookbacker(day, callback) {
             day = d.toJSON().slice(0, 10);
             Order.GetCalendar(day, function (isTradingDay) {
               if (isTradingDay) {
-                //console.log(colors.italic("adjusted 2 daysback"));
                 callback(day)
               } else {
                 d = new Date(day);
@@ -31,7 +29,6 @@ function lookbacker(day, callback) {
                 day = d.toJSON().slice(0, 10);
                 Order.GetCalendar(day, function (isTradingDay) {
                   if (isTradingDay) {
-                   // console.log(colors.italic("adjusted 3 daysback"));
                     callback(day)
                   } else {
                     d = new Date(day);
@@ -39,7 +36,6 @@ function lookbacker(day, callback) {
                     day = d.toJSON().slice(0, 10);
                     Order.GetCalendar(day, function (isTradingDay) {
                       if (isTradingDay) {
-                        //console.log(colors.italic("adjusted 4 daysback"));
                         callback(day)
                       } else {
                         d = new Date(day);
@@ -47,7 +43,6 @@ function lookbacker(day, callback) {
                         day = d.toJSON().slice(0, 10);
                         Order.GetCalendar(day, function (isTradingDay) {
                           if (isTradingDay) {
-                           // console.log(colors.italic("adjusted 5 daysback"));
                             callback(day)
                           } else {
                             d = new Date(day);
@@ -55,7 +50,6 @@ function lookbacker(day, callback) {
                             day = d.toJSON().slice(0, 10);
                             Order.GetCalendar(day, function (isTradingDay) {
                               if (isTradingDay) {
-                               // console.log(colors.italic("adjusted 6 daysback"));
                                 callback(day)
                               } else {
                                 console.log(colors.italic("adjusted 7 daysback **************"))

@@ -51,7 +51,6 @@ function order(orderQuantity, orderSide, symbol,sharePrice) {
       time_in_force: "day",
     };
   }
-  //console.log(orderObj)
   paca.createOrder(orderObj).then((order) => {
     console.log("Order :", order);
   });
@@ -107,7 +106,6 @@ module.exports = {
         limit: 5,
       })
       .then((barset) => {
-       // console.log(barset)
         var sharePrice = barset[symbol][barset[symbol].length-1].closePrice;
         var volume = barset[symbol][0].volume;
 

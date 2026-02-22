@@ -468,7 +468,6 @@ function topDeltas(company) {
     objectValues(company.Enterprise_Value) /
     objectValues(company.Enterprise_Value_LastYear)
   );
-  //  var revenueDelta =   Number(objectValues(company.Revenue) / objectValues(company.Revenue_LastYear))
   var marketCapDelta = Number(
     objectValues(company.Market_Cap) / objectValues(company.Market_Cap_LastYear)
   );
@@ -582,7 +581,6 @@ function beniesh(company) {
   var tata_LastYear = (Income_from_Continuous_Operations_LastYear - Operating_Cash_Flow_LastYear) / Total_Assets_LastYear
   var tataIndex = tata / tata_LastYear
 
-  // console.log({
   //   Property_Plant_Equpment_Net_LastYear:Property_Plant_Equpment_Net_LastYear,
   //   Total_Assets:Total_Assets,
   //   dsri:dsri,
@@ -673,7 +671,6 @@ function piotroskiScore(company) {
     PositiveOperatingCashFlow +
     PositiveReturnOnAssets +
     PositiveNetIncome;
-  // console.log({HigherAssetTurnover:HigherAssetTurnover,
   //   HigherGrossMargin:HigherGrossMargin ,
   //   HigherCurrentRatio:HigherCurrentRatio ,
   //   LoweredRatioOfLongTermDebt:LoweredRatioOfLongTermDebt ,
@@ -706,7 +703,6 @@ function altmanScore(company) {
       objectValues(company.EBIT_LastYear)) /
     objectValues(company.Total_Assets)
   ).toFixed(2);
-  // console.log({A:A,B:B,C:C,D:D,E:E})
   var ZScore = Number(1.2 * A + 1.4 * B + 3.3 * C + 0.6 * D + 1.0 * E).toFixed(
     2
   );
@@ -730,7 +726,6 @@ function addVol(company) {
 }
 
 
-
 function Net_IncomeDelta(company) {
   var Net_IncomeDelta =
     (objectValues(company.Net_Income) -
@@ -738,7 +733,6 @@ function Net_IncomeDelta(company) {
     objectValues(company.Net_Income_LastYear);
   return Net_IncomeDelta;
 }
-
 
 
 function GetShortVolume(day, callback) {

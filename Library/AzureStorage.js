@@ -30,7 +30,6 @@ function GetTable(tableName, tableService, query, callback, nextContinuationToke
 function GetDaily(token,tableName, tableService, query,dataArray, callback) {
   tableService.queryEntities(tableName, query, token, function (error, result) {
     if (!error) {
-     // console.log("Data  is: " + dataArray.length); 
       dataArray.push.apply(dataArray, result.entries);  
       var token = result.continuationToken;
       if (token) {  

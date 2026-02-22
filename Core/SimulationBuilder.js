@@ -5,7 +5,6 @@ const { lookback } = require("../Core/lookback");
 function SimulationBuilder(file, indexAdder, incrementer, method, back) {
  
   console.log("_________" + file + "_____________");
-  //  console.log("indexAdder: " + indexAdder);
   for (var i = 0; i <= indexAdder; i++) {
     (function (i) {
       setTimeout(
