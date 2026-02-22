@@ -13,6 +13,10 @@
       "Library/**/*.js",
       "Core/**/*.js"
     ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "Library/js/"
+    ],
     "coverageReporters": ["html", "text-summary"]
   },
   "dependencies": {
