@@ -16,3 +16,5 @@ Library/js/
 
 # ignore stupid mac file
 **/.DS_Store
+
+package-lock.json
