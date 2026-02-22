@@ -8,5 +8,11 @@ node-xmlhttprequest*
 !Library/Models/
 Library/Models/*
 !Library/Models/*MyAlgo.js
+# test coverage reports
+coverage/
+
+# vendored js
+Library/js/
+
 # ignore stupid mac file
 **/.DS_Store
